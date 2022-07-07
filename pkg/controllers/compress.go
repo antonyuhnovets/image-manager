@@ -5,6 +5,7 @@ import (
 	"github.com/antonyuhnovets/image-manager/pkg/utils"
 )
 
+// Save image in 4 sizes
 func CompressAndSave(s storage.Entity, file []byte) error {
 	var err error
 	qualities := []uint{100, 75, 50, 25}

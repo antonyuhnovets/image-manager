@@ -19,15 +19,18 @@ type Consumer struct {
 	Storage    storage.Entity
 }
 
+// Connect consumer, create channel, declare queue and get storage
 func (c *Consumer) Connect(cfg *config.Config) {
 	c.Connection = helpers.ConnectAMQP(cfg.AMQP_URL)
 	c.Channel = helpers.OpenChannel(c.Connection)
 	c.Queue = helpers.DeclareQueue("img", c.Channel)
 	log.Println("Consumer connectd")
-	c.Storage = storage.SetStorage(cfg)
+	c.Storage = storage.GetStorage(cfg)
 	log.Println("Consumer storage set")
 }
 
+// Declare Qos for message buffer
+// Start consuming messages and handle it
 func (c *Consumer) Consume() {
 	err := c.Channel.Qos(
 		1,     // prefetch count

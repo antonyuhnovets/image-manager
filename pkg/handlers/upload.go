@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Handler for uploading image endpoint
 func UploadImg() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		prod, ok := c.MustGet("Producer").(*broker.Producer)

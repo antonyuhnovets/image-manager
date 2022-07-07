@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Handler for downloading image endpoint
 func DownloadImg() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cons, ok := c.MustGet("Consumer").(*broker.Consumer)

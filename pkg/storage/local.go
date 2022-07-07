@@ -1,3 +1,5 @@
+// Realize methods for storage if it local
+
 package storage
 
 import (
@@ -18,7 +20,8 @@ type LocalStorage struct {
 	path string
 }
 
-func GetLocalStorage(path string) Entity {
+// Create dir for local storage if doesn`t exist
+func SetLocalStorage(path string) Entity {
 	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(path, os.ModePerm)
 		if err != nil {
@@ -28,8 +31,8 @@ func GetLocalStorage(path string) Entity {
 	return &LocalStorage{path}
 }
 
+// Save image in dir according to format and quality
 func (lc *LocalStorage) SaveImg(name string, imgBytes []byte, quality uint) error {
-	var err error
 	fpath := fmt.Sprintf("%s/%v_%s", lc.path, quality, name)
 
 	img, format, err := image.Decode(bytes.NewReader(imgBytes))
@@ -49,9 +52,11 @@ func (lc *LocalStorage) SaveImg(name string, imgBytes []byte, quality uint) erro
 		err = png.Encode(out, resizedImg)
 		log.Println("Image saved in png")
 	}
+
 	return err
 }
 
+// Find image by name and return full path to it
 func (lc *LocalStorage) GetImgByName(name string) (string, error) {
 	var fpath string
 	files, err := ioutil.ReadDir(lc.path)

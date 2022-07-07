@@ -11,6 +11,8 @@ type Config struct {
 	STORAGE_PATH string
 }
 
+// Load config from enviroment
+// Throw an error if broker connection string is not setted
 func LoadConfig() (*Config, error) {
 	storage := os.Getenv("STORAGE")
 	if storage == "" {

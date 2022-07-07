@@ -17,6 +17,7 @@ type Producer struct {
 	Queue      amqp.Queue
 }
 
+// Connect producer, create channel and declare queue
 func (p *Producer) Connect(cfg *config.Config) {
 	p.Connection = helpers.ConnectAMQP(cfg.AMQP_URL)
 	p.Channel = helpers.OpenChannel(p.Connection)
@@ -24,6 +25,7 @@ func (p *Producer) Connect(cfg *config.Config) {
 	log.Println("Producer connected")
 }
 
+// Publish message with image
 func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) error {
 	f, err := ioutil.ReadAll(file)
 	log.Println("File readed")
@@ -48,6 +50,7 @@ func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) er
 	return nil
 }
 
+// Disconnect producer
 func (p *Producer) Disconnect() {
 	p.Channel.Close()
 	p.Connection.Close()
