@@ -17,6 +17,7 @@ func DownloadImg() gin.HandlerFunc {
 		img := fmt.Sprintf("%s_%s", c.Param("quality"), c.Param("img_id"))
 		fpath, err := cons.Storage.GetImgByName(img)
 		if err != nil {
+			log.Println(err)
 			c.JSON(400, "Bad request")
 		}
 		c.File(fpath)

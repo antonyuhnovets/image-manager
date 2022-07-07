@@ -1,7 +1,6 @@
 package broker
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
@@ -22,14 +21,14 @@ func (p *Producer) Connect(cfg *config.Config) {
 	p.Connection = helpers.ConnectAMQP(cfg.AMQP_URL)
 	p.Channel = helpers.OpenChannel(p.Connection)
 	p.Queue = helpers.DeclareQueue("img", p.Channel)
-	log.Printf("Producer connected to %s", cfg.AMQP_URL)
+	log.Println("Producer connected")
 }
 
-func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) {
+func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) error {
 	f, err := ioutil.ReadAll(file)
-	fmt.Println("File readed")
+	log.Println("File readed")
 	if err != nil {
-		log.Fatalf("Failed to read file: %s", err)
+		return err
 	}
 
 	err = p.Channel.Publish(
@@ -38,13 +37,15 @@ func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) {
 		false,        // mandatory
 		false,        // immediate
 		amqp.Publishing{
-			Body: f,
+			ContentType: header.Header.Get("Content-Type"),
+			Body:        f,
 		},
 	)
-	fmt.Println("File published")
+	log.Println("File published")
 	if err != nil {
-		log.Fatalf("Failed to publish a message: %s", err)
+		return err
 	}
+	return nil
 }
 
 func (p *Producer) Disconnect() {

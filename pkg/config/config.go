@@ -1,18 +1,34 @@
 package config
 
-import "os"
+import (
+	"errors"
+	"os"
+)
 
 type Config struct {
-	AMQP_URL     string `env:"AMQP_URL"`
-	STORAGE      string `env:"STORAGE" default:"local"`
-	STORAGE_PATH string `env:"STORAGE_PATH"`
+	AMQP_URL     string
+	STORAGE      string
+	STORAGE_PATH string
 }
 
-func LoadConfig() *Config {
-	cfg := &Config{}
-	cfg.AMQP_URL = os.Getenv("AMQP_URL")
-	cfg.STORAGE = os.Getenv("STORAGE")
-	cfg.STORAGE_PATH = os.Getenv("STORAGE_PATH")
+func LoadConfig() (*Config, error) {
+	storage := os.Getenv("STORAGE")
+	if storage == "" {
+		storage = "local"
+	}
+	path := os.Getenv("STORAGE_PATH")
+	if path == "" {
+		path = "./test-images"
+	}
+	amqp := os.Getenv("AMQP_URL")
+	if amqp == "" {
+		return nil, errors.New("AMQP connection string not setted")
+	}
+	cfg := &Config{
+		amqp,
+		storage,
+		path,
+	}
 
-	return cfg
+	return cfg, nil
 }

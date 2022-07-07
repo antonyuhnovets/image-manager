@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,14 +14,18 @@ import (
 func main() {
 	router := gin.Default()
 
-	cfg := config.LoadConfig()
-	fmt.Println(cfg.AMQP_URL)
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	p := &broker.Producer{}
 	c := &broker.Consumer{}
 
 	p.Connect(cfg)
+	defer p.Disconnect()
 	c.Connect(cfg)
+	defer c.Disconnect()
 	go c.Consume()
 
 	router.Use(middlewares.BrokerMiddleware(c, p))

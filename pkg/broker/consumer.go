@@ -1,7 +1,6 @@
 package broker
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -55,10 +54,12 @@ func (c *Consumer) Consume() {
 
 	go func() {
 		for msg := range msgs {
-			fmt.Println("consuming")
+			log.Println("Consuming")
 			time.Sleep(time.Second * 5)
-			controllers.CompressAndSave(c.Storage, msg.Body)
-			fmt.Println("Accepted img")
+			err = controllers.CompressAndSave(c.Storage, msg.Body)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}()
 	<-forever

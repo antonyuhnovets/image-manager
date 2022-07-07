@@ -34,7 +34,7 @@ func (lc *LocalStorage) SaveImg(name string, imgBytes []byte, quality uint) erro
 
 	img, format, err := image.Decode(bytes.NewReader(imgBytes))
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
 	resizedImg := utils.ResizeImg(img, quality)
 
@@ -44,10 +44,10 @@ func (lc *LocalStorage) SaveImg(name string, imgBytes []byte, quality uint) erro
 	switch format {
 	case "jpeg":
 		err = jpeg.Encode(out, resizedImg, nil)
-		fmt.Println("Image saved in jpeg")
+		log.Println("Image saved in jpeg")
 	case "png":
 		err = png.Encode(out, resizedImg)
-		fmt.Println("Image saved in png")
+		log.Println("Image saved in png")
 	}
 	return err
 }
@@ -58,11 +58,11 @@ func (lc *LocalStorage) GetImgByName(name string) (string, error) {
 	if err != nil {
 		return name, err
 	}
-	fmt.Printf("Reading dir, searching for %s", name)
+	log.Printf("Reading dir, searching for %s\n", name)
 	for _, file := range files {
 		if file.Name() == name {
 			fpath = fmt.Sprintf("%s/%s", lc.path, file.Name())
-			fmt.Printf("Downloading %s", file.Name())
+			log.Printf("Downloading %s\n", file.Name())
 			return fpath, nil
 		}
 	}
