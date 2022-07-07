@@ -59,7 +59,7 @@ func (c *Consumer) Consume() {
 		for msg := range msgs {
 			log.Println("Consuming")
 			time.Sleep(time.Second * 5)
-			err = controllers.CompressAndSave(c.Storage, msg.Body)
+			err = controllers.CompressAndSave(msg.MessageId, c.Storage, msg.Body)
 			if err != nil {
 				log.Println(err)
 			}

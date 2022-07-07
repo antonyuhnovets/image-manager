@@ -26,7 +26,7 @@ func (p *Producer) Connect(cfg *config.Config) {
 }
 
 // Publish message with image
-func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) error {
+func (p *Producer) Publish(id string, file multipart.File, header *multipart.FileHeader) error {
 	f, err := ioutil.ReadAll(file)
 	log.Println("File readed")
 	if err != nil {
@@ -39,6 +39,7 @@ func (p *Producer) Publish(file multipart.File, header *multipart.FileHeader) er
 		false,        // mandatory
 		false,        // immediate
 		amqp.Publishing{
+			MessageId:   id,
 			ContentType: header.Header.Get("Content-Type"),
 			Body:        f,
 		},

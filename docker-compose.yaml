@@ -1,0 +1,25 @@
+version: "3.6"
+
+services:
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+        - RABBITMQ_DEFAULT_USER=myuser
+        - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+        - '5672:5672'
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 15s
+      retries: 5
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+    environment:
+      AMQP_URL: "amqp://myuser:mypassword@rabbitmq:5672/"
+    restart: on-failure
