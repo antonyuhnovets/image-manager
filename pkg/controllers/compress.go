@@ -14,5 +14,6 @@ func CompressAndSave(id string, s storage.Entity, file []byte) error {
 			return err
 		}
 	}
+
 	return nil
 }

@@ -25,6 +25,7 @@ func (c *Consumer) Connect(cfg *config.Config) {
 	c.Channel = helpers.OpenChannel(c.Connection)
 	c.Queue = helpers.DeclareQueue("img", c.Channel)
 	log.Println("Consumer connectd")
+
 	c.Storage = storage.GetStorage(cfg)
 	log.Println("Consumer storage set")
 }

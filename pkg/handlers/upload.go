@@ -30,6 +30,7 @@ func UploadImg() gin.HandlerFunc {
 		} else {
 			c.JSON(400, "Bad request: unknown type")
 		}
+
 		err = prod.Publish(id, file, header)
 		if err != nil {
 			c.JSON(400, err)

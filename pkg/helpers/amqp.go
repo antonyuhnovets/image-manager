@@ -12,6 +12,7 @@ func ConnectAMQP(url string) *amqp.Connection {
 	if err != nil {
 		log.Fatalf("Failed to connect RabbitMQ: %s", err)
 	}
+
 	return conn
 }
 
@@ -21,6 +22,7 @@ func OpenChannel(conn *amqp.Connection) *amqp.Channel {
 	if err != nil {
 		log.Fatalf("Failed to open channel: %s", err)
 	}
+
 	return ch
 }
 
@@ -37,5 +39,6 @@ func DeclareQueue(name string, ch *amqp.Channel) amqp.Queue {
 	if err != nil {
 		log.Fatalf("Failed to declare a queue: %s", err)
 	}
+
 	return q
 }

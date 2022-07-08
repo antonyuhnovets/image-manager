@@ -48,6 +48,7 @@ func (p *Producer) Publish(id string, file multipart.File, header *multipart.Fil
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
