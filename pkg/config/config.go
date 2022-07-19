@@ -2,34 +2,29 @@ package config
 
 import (
 	"errors"
-	"os"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	AMQP_URL     string
-	STORAGE      string
-	STORAGE_PATH string
+	Broker  string `env:"BROKER" env-default:"rabbitmq"`
+	Url     string `env:"CONNECTION_URL"`
+	Storage string `env:"STORAGE" env-default:"local"`
+	Path    string `env:"STORAGE_PATH" env-default:"./test-images"`
+	Host    string `env:"HOST" env-default:"0.0.0.0"`
+	Port    string `env:"PORT" env-default:"8080"`
 }
 
 // Load config from enviroment
 // Throw an error if broker connection string is not setted
-func LoadConfig() (*Config, error) {
-	storage := os.Getenv("STORAGE")
-	if storage == "" {
-		storage = "local"
+func LoadConfig() (Config, error) {
+	var cfg Config
+	err := cleanenv.ReadEnv(&cfg)
+	if err != nil {
+		return cfg, err
 	}
-	path := os.Getenv("STORAGE_PATH")
-	if path == "" {
-		path = "./test-images"
-	}
-	amqp := os.Getenv("AMQP_URL")
-	if amqp == "" {
-		return nil, errors.New("AMQP connection string not setted")
-	}
-	cfg := &Config{
-		amqp,
-		storage,
-		path,
+	if cfg.Url == "" {
+		return cfg, errors.New("broker connection string not setted")
 	}
 
 	return cfg, nil

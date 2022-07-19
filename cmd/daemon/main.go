@@ -1,14 +1,19 @@
+// Start server with all components
+
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/antonyuhnovets/image-manager/pkg/broker"
+	"github.com/antonyuhnovets/image-manager/pkg/compressor"
 	"github.com/antonyuhnovets/image-manager/pkg/config"
 	"github.com/antonyuhnovets/image-manager/pkg/middlewares"
 	"github.com/antonyuhnovets/image-manager/pkg/routes"
+	"github.com/antonyuhnovets/image-manager/pkg/storage"
 )
 
 func main() {
@@ -21,23 +26,22 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// Declare producer and consumer
-	p := &broker.Producer{}
-	c := &broker.Consumer{}
+	// Set storage and compressor tool for imgs
+	s := storage.GetStorage(&cfg)
+	c := compressor.GetCompressor(s.SaveImg)
 
-	// Connect message broker
-	p.Connect(cfg)
-	defer p.Disconnect()
-	c.Connect(cfg)
-	defer c.Disconnect()
-	go c.Consume()
+	// Connect to message broker, start consuming
+	b := broker.SetBroker(&cfg)
+	defer b.Producer.Disconnect()
+	defer b.Consumer.Disconnect()
+	go b.Consumer.Consume(c.Handler)
 
-	// Use broker middleware
-	router.Use(middlewares.BrokerMiddleware(c, p))
+	// Use broker and storage middleware
+	router.Use(middlewares.Middleware(b, s))
 
 	// Get API endpoints
 	routes.GetRoutes(router)
 
 	// Start server
-	router.Run(":8080")
+	router.Run(fmt.Sprintf("%s:%s", cfg.Host, cfg.Port))
 }
