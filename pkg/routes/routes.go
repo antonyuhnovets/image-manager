@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/antonyuhnovets/image-manager/pkg/handlers"
 	"github.com/gin-gonic/gin"
+
+	"github.com/antonyuhnovets/image-manager/pkg/handlers"
 )
 
 // Set up API endpoints

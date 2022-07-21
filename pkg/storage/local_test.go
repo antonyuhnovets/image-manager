@@ -4,13 +4,16 @@
 package storage
 
 import (
+	"bytes"
 	"fmt"
+	"image"
 	"io/ioutil"
 	"testing"
 )
 
 func setTestStorage() LocalStorage {
 	lc := LocalStorage{"./test-storage"}
+
 	return lc
 }
 
@@ -33,12 +36,17 @@ func TestSaveImg(t *testing.T) {
 	imgName := "test-image.jpeg"
 	path := fmt.Sprintf("%s/%s", storage.path, imgName)
 
-	img, err := ioutil.ReadFile(path)
+	imgBytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = storage.SaveImg("test_save", img, 50)
+	img, format, err := image.Decode(bytes.NewReader(imgBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = storage.SaveImg("50_test_save", format, img)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,6 +57,7 @@ func TestSaveImg(t *testing.T) {
 	}
 
 	savedFile := ""
+
 	for _, file := range files {
 		if file.Name() == "50_test_save" {
 			savedFile = file.Name()
